@@ -1,0 +1,64 @@
+[package]
+name = "typesafe-ai-rs"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Rust client for the TypeSafe AI System One API"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/austinsimpsond41/typesafe-ai-rs"
+keywords = ["typesafe", "ai", "classification", "sdk"]
+categories = ["api-bindings"]
+
+[lib]
+name = "typesafe"
+
+[dependencies]
+reqwest = { version = "0.13", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["time"] }
+tracing = "0.1"
+fastrand = "2"
+httpdate = "1"
+
+[dev-dependencies]
+# The integration tests use a hand-rolled canned-response server (tests/support)
+# rather than a mocking crate: they need an exact response *sequence*
+# (429 then 200) to prove retries retry, which matcher-based mocks express poorly.
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+[features]
+default = ["rustls-tls", "http2"]
+
+# --- TLS backends. Pick exactly one. ---
+# NOTE: reqwest 0.13 renamed 0.12's `rustls-tls` to plain `rustls`.
+rustls-tls = ["reqwest/rustls"]
+native-tls = ["reqwest/native-tls"]
+
+# --- Response compression ---
+gzip = ["reqwest/gzip"]
+brotli = ["reqwest/brotli"]
+deflate = ["reqwest/deflate"]
+zstd = ["reqwest/zstd"]
+
+# --- Transport ---
+socks = ["reqwest/socks"]
+http2 = ["reqwest/http2"]
+# WARNING: reqwest gates HTTP/3 behind an unstable cfg. Enabling this feature
+# alone will NOT build; it also needs RUSTFLAGS="--cfg reqwest_unstable".
+# For this reason `--all-features` does not build. This is reqwest's
+# constraint, not ours.
+http3 = ["reqwest/http3"]
+
+# --- Synchronous client (also the fallback for non-tokio runtimes) ---
+blocking = ["reqwest/blocking"]
+
+[package.metadata.docs.rs]
+all-features = false
+features = ["rustls-tls", "http2", "blocking", "gzip"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[[example]]
+name = "blocking"
+required-features = ["blocking"]
