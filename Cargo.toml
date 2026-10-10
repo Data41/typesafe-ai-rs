@@ -5,7 +5,7 @@ edition = "2024"
 rust-version = "1.85"
 description = "Rust client for the TypeSafe AI System One API"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/austinsimpsond41/typesafe-ai-rs"
+repository = "https://github.com/Data41/typesafe-ai-rs"
 keywords = ["typesafe", "ai", "classification", "sdk"]
 categories = ["api-bindings"]
 
